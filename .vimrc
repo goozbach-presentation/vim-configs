@@ -10,13 +10,29 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'elzr/vim-json'
 Plugin 'vim-scripts/VimClojure'
 Plugin 'plasticboy/vim-markdown'
+Plugin 'tpope/vim-fugitive'
+Plugin 'mileszs/ack.vim'
+Plugin 'gregsexton/MatchTag'
+Plugin 'scrooloose/syntastic'
+Plugin 'gregsexton/gitv'
+Plugin 'jamessan/vim-gnupg'
+Plugin 'othree/html5.vim'
+Plugin 'lepture/vim-css'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
+filetype plugin on
 
 " is this needed anymore?
 
-filetype plugin indent on
+"====[ Ensure autodoc'd plugins are supported ]===========
+
+runtime plugin/_autodoc.vim
+
+"=====[ Enable Nmap command for documented mappings ]================
+
+runtime plugin/documap.vim
+
 set backspace=indent,eol,start
 set showmatch
 set smartindent
@@ -26,7 +42,7 @@ syntax on
 set shiftround
 set cursorline
 set matchpairs+=<:>
-"set matchpairs+=<:>,«:»
+"set matchpairs+=<:>,Â«:Â»
 set showcmd
 
 set ruler
@@ -118,6 +134,86 @@ nmap <silent>  ;v   [Edit .vimrc]          :next $MYVIMRC<CR>
 nmap           ;vv  [Edit .vim/plugin/...] :next $HOME/.vim/plugin/
 
 
+"====[ Edit my temporary working files ]====================
+
+Nmap tt  [Edit temporary files] :next ~/tmp/temporary_file
+
+"=====[ Edit files in local bin directory ]========
+
+Nmap ;b  [Edit ~/bin/...]  :next ~/bin/
+
+"====[ Go back to alternate file (but retain other g<whatever> mappings)]====
+
+nmap g  :w<CR>:e #<CR>
+
+function! s:conditional_nnoremap ( name )
+    if maparg(a:name, 'n') == ""
+        execute 'nnoremap  <unique> ' . a:name . ' ' . a:name
+    endif
+endfunction
+call s:conditional_nnoremap( 'g,' )
+call s:conditional_nnoremap( 'g;' )
+call s:conditional_nnoremap( 'g~' )
+call s:conditional_nnoremap( 'g~~' )
+call s:conditional_nnoremap( 'g~g~' )
+call s:conditional_nnoremap( 'g#' )
+call s:conditional_nnoremap( 'g$' )
+call s:conditional_nnoremap( 'g&' )
+call s:conditional_nnoremap( "g'" )
+call s:conditional_nnoremap( 'g*' )
+call s:conditional_nnoremap( 'g0' )
+call s:conditional_nnoremap( 'g8' )
+call s:conditional_nnoremap( 'g<' )
+call s:conditional_nnoremap( 'g<C-G>' )
+call s:conditional_nnoremap( 'g<C-H>' )
+call s:conditional_nnoremap( 'g<C-]>' )
+call s:conditional_nnoremap( 'g<Down>' )
+call s:conditional_nnoremap( 'g<End>' )
+call s:conditional_nnoremap( 'g<Home>' )
+call s:conditional_nnoremap( 'g<LeftMouse>' )
+call s:conditional_nnoremap( 'g<MiddleMouse>' )
+call s:conditional_nnoremap( 'g<RightMouse>' )
+call s:conditional_nnoremap( 'g<Up>' )
+call s:conditional_nnoremap( 'g?' )
+call s:conditional_nnoremap( 'g??' )
+call s:conditional_nnoremap( 'g?g?' )
+call s:conditional_nnoremap( 'g@' )
+call s:conditional_nnoremap( 'gD' )
+call s:conditional_nnoremap( 'gE' )
+call s:conditional_nnoremap( 'gF' )
+call s:conditional_nnoremap( 'gH' )
+call s:conditional_nnoremap( 'gI' )
+call s:conditional_nnoremap( 'gJ' )
+call s:conditional_nnoremap( 'gP' )
+call s:conditional_nnoremap( 'gR' )
+call s:conditional_nnoremap( 'gU' )
+call s:conditional_nnoremap( 'gUU' )
+call s:conditional_nnoremap( 'gUgU' )
+call s:conditional_nnoremap( 'gV' )
+call s:conditional_nnoremap( 'g]' )
+call s:conditional_nnoremap( 'g^' )
+call s:conditional_nnoremap( 'g`' )
+call s:conditional_nnoremap( 'ga' )
+call s:conditional_nnoremap( 'gd' )
+call s:conditional_nnoremap( 'ge' )
+call s:conditional_nnoremap( 'gf' )
+call s:conditional_nnoremap( 'gg' )
+call s:conditional_nnoremap( 'gh' )
+call s:conditional_nnoremap( 'gi' )
+call s:conditional_nnoremap( 'gj' )
+call s:conditional_nnoremap( 'gk' )
+call s:conditional_nnoremap( 'gm' )
+call s:conditional_nnoremap( 'go' )
+call s:conditional_nnoremap( 'gp' )
+call s:conditional_nnoremap( 'gq' )
+call s:conditional_nnoremap( 'gr' )
+call s:conditional_nnoremap( 'gs' )
+call s:conditional_nnoremap( 'gu' )
+call s:conditional_nnoremap( 'gugu' )
+call s:conditional_nnoremap( 'guu' )
+call s:conditional_nnoremap( 'gv' )
+call s:conditional_nnoremap( 'gw' )
+"call s:conditional_nnoremap( 'gx' )
 
 "====[ Use persistent undo ]=================
 
@@ -175,16 +271,12 @@ set hlsearch        "Highlight all matches
 highlight clear Search
 highlight       Search    ctermfg=White
 
-"Delete in normal mode switches off highlighting till next search...
-nmap <silent> <BS> :nohlsearch
-
 "Delete in normal mode to switch off highlighting till next search and clear messages...
-"Nmap <silent> <BS> [Cancel highlighting]  :call HLNextOff() <BAR> :nohlsearch <BAR> :call VG_Show_CursorColumn('off')<CR>
-
+Nmap <silent> <BS> [Cancel highlighting]  :call HLNextOff() <BAR> :nohlsearch <BAR> :call VG_Show_CursorColumn('off')<CR>
 
 
 "Double-delete to remove trailing whitespace...
-"Nmap <silent> <BS><BS>  [Remove trailing whitespace] mz:call TrimTrailingWS()<CR>`z
+Nmap <silent> <BS><BS>  [Remove trailing whitespace] mz:call TrimTrailingWS()<CR>`z
 
 function! TrimTrailingWS ()
     if search('\s\+$', 'cnw')
@@ -192,6 +284,36 @@ function! TrimTrailingWS ()
     endif
 endfunction
 
+
+"====[ Handle encoding issues on a Macos terminal]============
+
+set encoding=latin1
+
+Nmap <silent> U  [Toggle UTF8]  :call ToggleUTF8()<CR><CR>:echo '[' . &fileencoding . ']'<CR>
+Nmap <silent> UU [Toggle Unicode terminal]  :call ToggleTerminal()<CR><CR>
+
+function! ToggleUTF8 ()
+    if &fileencoding =~ 'utf-\?8'
+        set fileencoding=latin1
+        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal"'
+    else
+        set fileencoding=utf8
+        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal_unicode"'
+    endif
+endfunction
+
+let g:UnicodeTerminal = 0
+function! ToggleTerminal ()
+    if !g:UnicodeTerminal
+        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal"'
+        let g:UnicodeTerminal = 1
+        echo '[Unicode terminal]'
+    else
+        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal_unicode"'
+        let g:UnicodeTerminal = 0
+        echo '[Latin1 terminal]'
+    endif
+endfunction
 
 "=======[ Fix smartindent stupidities ]============
 
@@ -207,11 +329,13 @@ function! ShiftLine()
     set smartindent
 endfunction
 
-inoremap <silent> #  X<C-H>#<C-R>=SmartOctothorpe()<CR>|  "And no magic outdent for comments
+inoremap <silent> #  X<C-H>#<C-R>=SmartOctothorpe()<CR>
 
 function! SmartOctothorpe ()
     if &filetype =~ '^perl' && search('^.\{-}\S.\{-}\s#\%#$','bn')
-        return "\<ESC>:call EQAS_Align('nmap',{'pattern':'\\%(\\S\\s*\\)\\@<=#'})\<CR>A"
+        return "\<ESC>"
+            \. ":call EQAS_Align('nmap',{'pattern':'\\%(\\S\\s*\\)\\@<=#'})\<CR>"
+            \. "A"
     else
         return ""
     endif
@@ -355,6 +479,9 @@ endfunction
     augroup END
 
 
+set formatoptions-=cro
+
+set wrapmargin=2                            "Wrap 2 characters from the edge of the window
 "====[ Execute Perl file ]=====================
 
     nmap W :!clear;echo;echo;polyperl %;echo;echo;echo<CR>
@@ -585,10 +712,6 @@ function! TransCopy(type, ...)
     let @@ = reg_save
 endfunction
 
-"====[ Ensure autodoc'd plugins are supported ]===========
-
-runtime plugin/_autodoc.vim
-
 
 "=====[ Always syntax highlight .patch and ToDo files ]=======================
 
@@ -613,7 +736,7 @@ augroup END
 "=====[ Configure % key (via matchit plugin) ]==============================
 
 " Match angle brackets...
-"set matchpairs+=<:>,«:»
+set matchpairs+=<:> ",Â«:Â»
 
 " Match double-angles, XML tags and Perl keywords...
 let TO = ':'
@@ -728,8 +851,8 @@ let EOL      = '\s*$'
                 " =====    =====      ===============================    ============
 call SmartcomAdd( '<<',    ANYTHING,  '>>',                              {'restore':1} )
 call SmartcomAdd( '<<',    '>>',      "\<CR>\<ESC>O\<TAB>"                             )
-call SmartcomAdd( '«',     ANYTHING,  '»',                               {'restore':1} )
-call SmartcomAdd( '«',     '»',       "\<CR>\<ESC>O\<TAB>"                             )
+call SmartcomAdd( 'Â«',     ANYTHING,  'Â»',                               {'restore':1} )
+call SmartcomAdd( 'Â«',     'Â»',       "\<CR>\<ESC>O\<TAB>"                             )
 call SmartcomAdd( '{{',    ANYTHING,  '}}',                              {'restore':1} )
 call SmartcomAdd( '{{',    '}}',      NOTHING,                                         )
 call SmartcomAdd( 'qr{',   ANYTHING,  '}xms',                            {'restore':1} )
@@ -913,13 +1036,15 @@ nmap *  :let @/ = '\<'.expand('<cword>').'\>' ==? @/ ? @/ : '\<'.expand('<cword>
 
 "=====[ Autocomplete arrows ]===========================
 
-inoremap <silent> =>  =><C-R>=SmartArrow()<CR>
+inoremap <silent> >        ><C-R>=SmartArrow()<CR>
 
 function! SmartArrow ()
-    if &filetype =~ '^perl' && search('^.\{-}\S.\{-}\s=>\%#$','bn')
-        return "\<ESC>:call EQAS_Align('nmap',{'pattern':'\\%(\\S\\s*\\)\\@<==>'})\<CR>A"
+    if &filetype =~ '^perl' && search('^.*\S.*\s=>\%#$', 'bn', line('.'))
+        return "\<ESC>"
+            \. ":call EQAS_Align('nmap',{'pattern':'=>'})\<CR>"
+            \. ":call EQAS_Align('nmap',{'pattern':'\\%(\\S\\s*\\)\\@<=#'})\<CR>"
+            \. "A"
     else
         return ""
     endif
 endfunction
-
