@@ -1,5 +1,3 @@
-" Note: Skip initialization for vim-tiny or vim-small.
-if !1 | finish | endif
 
 " Required:
 filetype plugin indent on
@@ -50,8 +48,8 @@ set formatoptions=qrn1
 set colorcolumn=85
 
 " list mode
-"set list
-"set listchars=tab:▸\ ,eol:¬
+set list
+set listchars=tab:▸\ ,eol:¬
 
 " disable help
 inoremap <F1> <ESC>
@@ -91,3 +89,7 @@ nmap <C-Down> ]e
 " Bubble multiple lines
 vmap <C-Up> [egv
 vmap <C-Down> ]egv
+
+" window stuffs
+nmap <localleader>ww :wincmd w<cr>:wincmd _<cr>
+nmap <localleader>we :wincmd w<cr>:wincmd =<cr>
